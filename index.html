@@ -780,7 +780,7 @@
       <p class="video-label">Reflections on Voicecraft from Elder Les Spencer</p>
       <div class="video-wrapper">
         <iframe
-          src="https://www.youtube.com/embed/IMVY2zcVuUo?rel=0&modestbranding=1&showinfo=0&playsinline=1"
+          src="https://www.youtube.com/embed/IMVY2zcVuUo?rel=0&modestbranding=1&showinfo=0&playsinline=1&vq=hd720"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
@@ -832,13 +832,16 @@
       if (CONFIG.phase2VideoId) {
         document.getElementById('phase2VideoBlock').style.display = 'block';
         document.getElementById('phase2Video').src =
-          'https://www.youtube.com/embed/' + CONFIG.phase2VideoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1';
+          'https://www.youtube.com/embed/' + CONFIG.phase2VideoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&vq=hd720';
       }
 
       setTimeout(function() {
         transitionPhase('phase-invite', 'phase-reflect');
       }, 100);
     }
+
+    // Track the intention text for linking with speaker info
+    var storedIntention = '';
 
     function goToPassage(skipped) {
       skipped = skipped || false;
@@ -856,6 +859,7 @@
         document.getElementById('intentionEcho').textContent = '\u201C' + text + '\u201D';
         // Show speaker opt-in for people who engaged
         document.getElementById('speakerOptIn').style.display = 'block';
+        storedIntention = text;
         storeIntention(text);
       }
 
@@ -909,6 +913,7 @@
           event: CONFIG.eventName,
           speakerName: name,
           openToStage: openToStage ? 'Yes' : 'No',
+          intention: storedIntention,
           timestamp: new Date().toISOString()
         })
       }).catch(function() {});
