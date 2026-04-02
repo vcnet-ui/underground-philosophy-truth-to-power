@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Underground Philosophy — Truth to Power</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --dark: #252834;
+      --surface: #2b2f3c;
+      --accent: #152325;
+      --accent-glow: rgba(21, 35, 37, 0.4);
+      --text: #d4cfc7;
+      --text-bright: #ede9e2;
+      --text-dim: rgba(212, 207, 199, 0.6);
+      --text-mid: rgba(212, 207, 199, 0.8);
+      --ember: #c45d3e;
+      --border: rgba(212, 207, 199, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* --- Ambient background --- */
+    .ambient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, rgba(21, 35, 37, 0.15) 0%, transparent 70%);
+      animation: ambientDrift 20s ease-in-out infinite alternate;
+    }
+
+    .ambient::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      right: -20%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(196, 93, 62, 0.04) 0%, transparent 70%);
+      animation: ambientDrift 25s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes ambientDrift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(40px, 30px); }
+    }
+
+    /* --- Grain overlay --- */
+    .grain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* --- Container --- */
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 120px 28px 40px;
+      text-align: center;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      animation: portalPulse 6s ease-in-out infinite;
+      box-shadow: 
+        0 0 20px rgba(201, 168, 76, 0.03),
+        inset 0 0 20px rgba(201, 168, 76, 0.02);
+    }
+
+    @keyframes portalPulse {
+      0% { 
+        border-color: rgba(201, 168, 76, 0.15);
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.02), inset 0 0 20px rgba(201, 168, 76, 0.01);
+      }
+      50% { 
+        border-color: rgba(201, 168, 76, 0.35);
+        box-shadow: 0 0 40px rgba(201, 168, 76, 0.06), inset 0 0 40px rgba(201, 168, 76, 0.03);
+      }
+      100% { 
+        border-color: rgba(201, 168, 76, 0.15);
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.02), inset 0 0 20px rgba(201, 168, 76, 0.01);
+      }
+    }
+
+    /* --- Phase system --- */
+    .phase {
+      display: none;
+      opacity: 0;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .phase.active {
+      display: block;
+      animation: phaseIn 1.2s ease forwards;
+    }
+
+    .phase.exiting {
+      animation: phaseOut 0.6s ease forwards;
+    }
+
+    @keyframes phaseIn {
+      0% { opacity: 0; transform: translateY(16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes phaseOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-12px); }
+    }
+
+    /* --- Phase 1: Invitation --- */
+    .event-label {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+
+    .event-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 9vw, 72px);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--text-bright);
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .event-theme {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-mid);
+      margin-bottom: 12px;
+    }
+
+    .event-meta {
+      font-size: 18px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    .enter-btn {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid #c9a84c;
+      padding: 18px 52px;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enter-btn::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: var(--accent);
+      transition: height 0.5s ease;
+      z-index: -1;
+    }
+
+    .enter-btn:hover {
+      border-color: #dfc06a;
+      color: var(--text-bright);
+    }
+
+    .enter-btn:hover::before {
+      height: 100%;
+    }
+
+    /* --- Phase 2: Reflection --- */
+    .reflection-prompt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5.5vw, 42px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-bright);
+      line-height: 1.4;
+      margin-bottom: 40px;
+    }
+
+    .reflection-context {
+      font-size: 19px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .intention-input {
+      width: 100%;
+      min-height: 120px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-bright);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 300;
+      font-style: italic;
+      padding: 24px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      transition: border-color 0.4s ease;
+    }
+
+    .intention-input::placeholder {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .intention-input:focus {
+      border-color: rgba(21, 35, 37, 0.5);
+    }
+
+    .char-hint {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-top: 10px;
+      text-align: right;
+      transition: color 0.3s ease;
+    }
+
+    .char-hint.ready {
+      color: var(--text-mid);
+    }
+
+    .continue-row {
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .continue-btn {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-bright);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 18px 48px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .continue-btn.enabled {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .continue-btn.enabled:hover {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--text-dim);
+    }
+
+    .skip-link {
+      font-size: 17px;
+      color: var(--text-dim);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      border: none;
+      background: none;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    .skip-link:hover {
+      color: var(--text-mid);
+    }
+
+    /* --- Phase 3: Passage --- */
+    .passage-message {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 300;
+      color: var(--text-bright);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .intention-echo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-mid);
+      max-width: 480px;
+      margin: 0 auto 12px;
+      line-height: 1.5;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ticket-btn {
+      display: inline-block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-bright);
+      background: var(--accent);
+      border: 1px solid #c9a84c;
+      padding: 20px 56px;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .ticket-btn:hover {
+      background: rgba(21, 35, 37, 0.8);
+      letter-spacing: 4px;
+    }
+
+    .ticket-btn::after {
+      content: '\2192';
+      margin-left: 12px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .ticket-btn:hover::after {
+      margin-left: 20px;
+    }
+
+    /* --- Rotating logo --- */
+    .logo-footer {
+      margin-top: 48px;
+      display: flex;
+      justify-content: center;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .logo-footer img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      animation: logoSpin 60s linear infinite reverse;
+      opacity: 1;
+    }
+
+    @keyframes logoSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* --- Video embeds --- */
+    .video-wrapper {
+      margin-top: 28px;
+      margin-bottom: 28px;
+      position: relative;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 56.25%;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      opacity: 0;
+      animation: wygVideoIn 1s ease 0.8s forwards;
+      background: var(--surface);
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-label {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    @keyframes wygVideoIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Discount code reveal --- */
+    .discount-reveal {
+      margin-top: 16px;
+      padding: 0;
+      border: none;
+      background: none;
+    }
+
+    .discount-reveal p {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .discount-reveal .code {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 500;
+      color: #c9a84c;
+      letter-spacing: 2px;
+    }
+
+    /* --- Direct ticket link (appears on every phase) --- */
+    .direct-link {
+      margin-top: 32px;
+      text-align: center;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .direct-link a {
+      color: #c9a84c;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .direct-link a:hover {
+      color: #dfc06a;
+    }
+
+    /* --- Event details block --- */
+    .event-details {
+      margin-top: 56px;
+      margin-bottom: 40px;
+      padding: 36px 0;
+      border-top: 1px solid rgba(201, 168, 76, 0.15);
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .event-venue {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-bright);
+      margin-bottom: 6px;
+    }
+
+    .event-date-recap {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text-mid);
+      margin-bottom: 20px;
+    }
+
+    .event-schedule {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .event-schedule li {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text-mid);
+      padding: 5px 0;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .event-schedule li .time {
+      color: var(--text-dim);
+      min-width: 70px;
+      text-align: right;
+    }
+
+    .event-schedule li .desc {
+      min-width: 280px;
+      text-align: left;
+    }
+
+    .event-schedule li:last-child .desc {
+      font-style: italic;
+    }
+
+    .event-note {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-top: 20px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      font-style: italic;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 520px) {
+      .container {
+        padding: 60px 20px 60px;
+      }
+
+      .intention-input {
+        font-size: 18px;
+        padding: 20px;
+      }
+
+      .continue-row {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .enter-btn,
+      .continue-btn,
+      .ticket-btn {
+        padding: 16px 40px;
+      }
+
+      .event-schedule li .desc {
+        min-width: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient"></div>
+  <div class="grain"></div>
+
+  <div class="container">
+
+    <!-- PHASE 1: Invitation -->
+    <div class="phase active" id="phase-invite">
+      <p class="event-label">Underground Philosophy</p>
+      <h1 class="event-title">Truth to Power</h1>
+      <p class="event-theme">What must be brought to light today?</p>
+      <p class="event-meta">Caz Reitop's, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April 2026 &nbsp;&middot;&nbsp; 25 seats &nbsp;&middot;&nbsp; Doors 5.30pm</p>
+      <button class="enter-btn" onclick="goToReflection()">Enter</button>
+      <div class="direct-link"><a href="#" target="_blank">or go directly to tickets &rarr;</a></div>
+    </div>
+
+    <!-- PHASE 2: Reflection -->
+    <div class="phase" id="phase-reflect">
+      <!-- VIDEO PLACEHOLDER: replace phase2VideoId in CONFIG when ready -->
+      <div id="phase2VideoBlock" style="display: none;">
+        <p class="video-label">On altered states of conversation:</p>
+        <div class="video-wrapper">
+          <iframe
+            id="phase2Video"
+            src="about:blank"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+      <p class="reflection-prompt">What of great importance goes unsaid today?</p>
+      <p class="reflection-context">There are no wrong answers. This just helps us understand what the room is bringing to the evening.</p>
+      <textarea
+        class="intention-input"
+        id="intentionText"
+        placeholder="Take a moment..."
+        maxlength="500"
+        oninput="handleInput()"
+      ></textarea>
+      <p class="char-hint" id="charHint"></p>
+      <div class="continue-row">
+        <button class="continue-btn" id="continueBtn" onclick="goToPassage()">Continue</button>
+        <button class="skip-link" onclick="goToPassage(true)">skip this step</button>
+      </div>
+      <div class="direct-link"><a href="#" target="_blank">or go directly to tickets &rarr;</a></div>
+    </div>
+
+    <!-- PHASE 3: Passage to tickets -->
+    <div class="phase" id="phase-passage">
+      <p class="passage-message" id="passageMessage">Your question has been received</p>
+      <div id="echoBlock">
+        <p class="intention-echo" id="intentionEcho"></p>
+      </div>
+      <div style="margin-top: 36px;">
+        <a
+          class="ticket-btn"
+          id="ticketLink"
+          href="#"
+          target="_blank"
+        >Get your ticket</a>
+        <div class="discount-reveal" id="discountBlock" style="display: block; margin-top: 20px;">
+          <p>Thanks for sharing. Use code <span class="code" id="discountDisplay" style="display: inline; font-size: 16px;">INTENTION5</span> at checkout for <span id="discountAmount">$5</span> off</p>
+        </div>
+      </div>
+      <div class="event-details">
+        <p class="event-venue">Caz Reitop's, Collingwood, Melbourne</p>
+        <p class="event-date-recap">Thursday 23rd April 2026</p>
+        <ul class="event-schedule">
+          <li><span class="time">5.30pm</span><span class="desc">Doors &mdash; gather upstairs in the cocktail lounge</span></li>
+          <li><span class="time">5.50pm</span><span class="desc">Take your seats downstairs in the Vault</span></li>
+          <li><span class="time">6.00pm</span><span class="desc">Show start</span></li>
+          <li><span class="time">8.00pm</span><span class="desc">Show end</span></li>
+          <li><span class="time">8.00pm</span><span class="desc">Optional speakeasy upstairs in the cocktail lounge</span></li>
+        </ul>
+        <p class="event-note">Spoken participation during the show is optional and limited. Questions and comments can be made from the audience. Some will be invited onto stage to deepen the dialogue.</p>
+      </div>
+      <p class="video-label">Reflections on Voicecraft from Elder Les Spencer</p>
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube.com/embed/IMVY2zcVuUo?rel=0&modestbranding=1&showinfo=0&playsinline=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Logo (Phase 1 only) -->
+    <div class="logo-footer" id="logoFooter">
+      <img src="VC_logo_transparent.png" alt="Voicecraft">
+    </div>
+
+  </div>
+
+  <script>
+    // =============================================
+    // CONFIGURATION — Edit these for each event
+    // =============================================
+    var CONFIG = {
+      eventName: 'Truth to Power',
+      // Replace with your actual Humanitix event URL (no trailing slash)
+      humanitixUrl: 'https://events.humanitix.com/underground-philosophy-truth-to-power',
+      // Google Apps Script Web App URL
+      sheetsWebhook: 'https://script.google.com/macros/s/AKfycbzveC7DtgMbeR2i4jRTpZIP499kl3HBHt_UeYO9xkD8xvxrpj5aXsnXCvqVmWNnIHFR/exec',
+      // Discount code shown to people who complete the reflection
+      discountCode: 'INTENTION5',
+      discountAmount: '$5',
+      // Phase 2 video (YouTube video ID only)
+      // Set to '' to hide video, or add an ID when ready
+      phase2VideoId: 'L3ji2mXrFSs'
+    };
+
+    // =============================================
+    // PHASE TRANSITIONS
+    // =============================================
+    function transitionPhase(fromId, toId) {
+      var from = document.getElementById(fromId);
+      var to = document.getElementById(toId);
+
+      from.classList.add('exiting');
+
+      setTimeout(function() {
+        from.classList.remove('active', 'exiting');
+        to.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 600);
+    }
+
+    function goToReflection() {
+      document.getElementById('logoFooter').style.display = 'none';
+
+      // Only show and load Phase 2 video if an ID is set
+      if (CONFIG.phase2VideoId) {
+        document.getElementById('phase2VideoBlock').style.display = 'block';
+        document.getElementById('phase2Video').src =
+          'https://www.youtube.com/embed/' + CONFIG.phase2VideoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1';
+      }
+
+      setTimeout(function() {
+        transitionPhase('phase-invite', 'phase-reflect');
+      }, 100);
+    }
+
+    function goToPassage(skipped) {
+      skipped = skipped || false;
+      var text = document.getElementById('intentionText').value.trim();
+
+      // Stop Phase 2 video if it was playing
+      if (CONFIG.phase2VideoId) {
+        document.getElementById('phase2Video').src = '';
+      }
+
+      if (skipped || !text) {
+        document.getElementById('echoBlock').style.display = 'none';
+        document.getElementById('discountBlock').style.display = 'none';
+        document.getElementById('passageMessage').textContent = 'We look forward to having you in the room.';
+      } else {
+        document.getElementById('intentionEcho').textContent = '\u201C' + text + '\u201D';
+        document.getElementById('discountDisplay').textContent = CONFIG.discountCode;
+        document.getElementById('discountAmount').textContent = CONFIG.discountAmount;
+        storeIntention(text);
+      }
+
+      var ticketUrl = CONFIG.humanitixUrl
+        + '?utm_source=underground_flow'
+        + '&utm_medium=web';
+
+      document.getElementById('ticketLink').href = ticketUrl;
+      transitionPhase('phase-reflect', 'phase-passage');
+    }
+
+    // =============================================
+    // INPUT HANDLING
+    // =============================================
+    function handleInput() {
+      var text = document.getElementById('intentionText').value;
+      var hint = document.getElementById('charHint');
+      var btn = document.getElementById('continueBtn');
+      var len = text.trim().length;
+
+      if (len > 0) {
+        hint.textContent = len + ' / 500';
+        hint.classList.add('ready');
+        btn.classList.add('enabled');
+      } else {
+        hint.textContent = '';
+        hint.classList.remove('ready');
+        btn.classList.remove('enabled');
+      }
+    }
+
+    // =============================================
+    // STORE INTENTION (Google Sheets via Apps Script)
+    // =============================================
+    function storeIntention(text) {
+      fetch(CONFIG.sheetsWebhook, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: CONFIG.eventName,
+          intention: text,
+          timestamp: new Date().toISOString()
+        })
+      }).catch(function() {
+        // Silent fail
+      });
+    }
+
+    // =============================================
+    // INITIALISE
+    // =============================================
+    (function init() {
+      var ticketUrl = CONFIG.humanitixUrl
+        + '?utm_source=underground_flow'
+        + '&utm_medium=web';
+
+      var links = document.querySelectorAll('.direct-link a');
+      for (var i = 0; i < links.length; i++) {
+        links[i].href = ticketUrl;
+      }
+      document.getElementById('ticketLink').href = ticketUrl;
+    })();
+
+    // =============================================
+    // IFRAME AUTO-RESIZE
+    // =============================================
+    function notifyParentHeight() {
+      var height = document.body.scrollHeight;
+      window.parent.postMessage({ type: 'resize', height: height }, '*');
+    }
+
+    window.addEventListener('load', function() {
+      setTimeout(notifyParentHeight, 100);
+    });
+    window.addEventListener('resize', notifyParentHeight);
+
+    var origTransition = transitionPhase;
+    transitionPhase = function(fromId, toId) {
+      origTransition(fromId, toId);
+      setTimeout(notifyParentHeight, 1000);
+    };
+  </script>
+
+</body>
+</html>
