@@ -719,7 +719,7 @@
         </div>
       </div>
       <p class="reflection-prompt">What goes unheard today? What interests you about this topic?</p>
-      <p class="reflection-context">We read these before the evening begins. Your words help shape the room.</p>
+      <p class="reflection-context">Your words help shape the room.</p>
       <textarea
         class="intention-input"
         id="intentionText"
@@ -756,7 +756,7 @@
             type="text"
             class="name-input"
             id="speakerName"
-            placeholder="Your name (optional)"
+            placeholder="Your name"
           >
           <label class="stage-checkbox">
             <input type="checkbox" id="openToStage">
@@ -776,7 +776,6 @@
           <li><span class="time">8.00pm</span><span class="desc">Show end</span></li>
           <li><span class="time">8.00pm</span><span class="desc">Optional speakeasy upstairs in the cocktail lounge</span></li>
         </ul>
-        <p class="event-note">Spoken participation during the show is optional and limited. Questions and comments can be made from the audience. Some will be invited onto stage to deepen the dialogue.</p>
       </div>
       <p class="video-label">Reflections on Voicecraft from Elder Les Spencer</p>
       <div class="video-wrapper">
@@ -895,6 +894,12 @@
       var name = document.getElementById('speakerName').value.trim();
       var openToStage = document.getElementById('openToStage').checked;
 
+      if (!name) {
+        document.getElementById('speakerName').style.borderColor = 'rgba(201, 168, 76, 0.5)';
+        document.getElementById('speakerName').focus();
+        return;
+      }
+
       // Send speaker info to the same sheet
       fetch(CONFIG.sheetsWebhook, {
         method: 'POST',
@@ -902,7 +907,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event: CONFIG.eventName,
-          speakerName: name || '(anonymous)',
+          speakerName: name,
           openToStage: openToStage ? 'Yes' : 'No',
           timestamp: new Date().toISOString()
         })
