@@ -470,6 +470,107 @@
       letter-spacing: 2px;
     }
 
+    /* --- Speaker opt-in block --- */
+    .speaker-block {
+      margin-top: 40px;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .speaker-intro {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .name-input {
+      width: 100%;
+      max-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-bright);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.4s ease;
+      margin-bottom: 16px;
+    }
+
+    .name-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .name-input:focus {
+      border-color: rgba(201, 168, 76, 0.3);
+    }
+
+    .stage-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text-mid);
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .stage-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #c9a84c;
+      cursor: pointer;
+    }
+
+    .submit-speaker {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      padding: 12px 36px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .submit-speaker:hover {
+      border-color: #c9a84c;
+      color: var(--text-bright);
+    }
+
+    .speaker-skip {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-dim);
+      cursor: pointer;
+      margin-top: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .speaker-skip:hover {
+      color: var(--text-mid);
+    }
+
+    .speaker-thanks {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--text-mid);
+      margin-top: 16px;
+    }
+
     /* --- Direct ticket link (appears on every phase) --- */
     .direct-link {
       margin-top: 32px;
@@ -595,10 +696,10 @@
 
     <!-- PHASE 1: Invitation -->
     <div class="phase active" id="phase-invite">
-      <p class="event-label">Underground Philosophy</p>
+      <p class="event-label">Underground Philosophy Invites</p>
       <h1 class="event-title">Truth to Power</h1>
       <p class="event-theme">What must be brought to light today?</p>
-      <p class="event-meta">Caz Reitop's, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April 2026 &nbsp;&middot;&nbsp; 25 seats &nbsp;&middot;&nbsp; Doors 5.30pm</p>
+      <p class="event-meta">Caz Reitop's, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April 2026 &nbsp;&middot;&nbsp; 25 seats</p>
       <button class="enter-btn" onclick="goToReflection()">Enter</button>
       <div class="direct-link"><a href="#" target="_blank">or go directly to tickets &rarr;</a></div>
     </div>
@@ -607,7 +708,7 @@
     <div class="phase" id="phase-reflect">
       <!-- VIDEO PLACEHOLDER: replace phase2VideoId in CONFIG when ready -->
       <div id="phase2VideoBlock" style="display: none;">
-        <p class="video-label">On altered states of conversation:</p>
+        <p class="video-label">Dialogue at Underground Philosophy:</p>
         <div class="video-wrapper">
           <iframe
             id="phase2Video"
@@ -617,8 +718,8 @@
           </iframe>
         </div>
       </div>
-      <p class="reflection-prompt">What of great importance goes unsaid today?</p>
-      <p class="reflection-context">There are no wrong answers. This just helps us understand what the room is bringing to the evening.</p>
+      <p class="reflection-prompt">What goes unheard today? What interests you about this topic?</p>
+      <p class="reflection-context">We read these before the evening begins. Your words help shape the room.</p>
       <textarea
         class="intention-input"
         id="intentionText"
@@ -636,7 +737,7 @@
 
     <!-- PHASE 3: Passage to tickets -->
     <div class="phase" id="phase-passage">
-      <p class="passage-message" id="passageMessage">Your question has been received</p>
+      <p class="passage-message" id="passageMessage">Your words have been received</p>
       <div id="echoBlock">
         <p class="intention-echo" id="intentionEcho"></p>
       </div>
@@ -647,8 +748,22 @@
           href="#"
           target="_blank"
         >Get your ticket</a>
-        <div class="discount-reveal" id="discountBlock" style="display: block; margin-top: 20px;">
-          <p>Thanks for sharing. Use code <span class="code" id="discountDisplay" style="display: inline; font-size: 16px;">INTENTION5</span> at checkout for <span id="discountAmount">$5</span> off</p>
+      </div>
+      <div id="speakerOptIn" style="display: none;">
+        <div class="speaker-block">
+          <p class="speaker-intro">If you'd like, let us know who you are and whether you're open to being invited on stage during the evening.</p>
+          <input
+            type="text"
+            class="name-input"
+            id="speakerName"
+            placeholder="Your name (optional)"
+          >
+          <label class="stage-checkbox">
+            <input type="checkbox" id="openToStage">
+            <span>I'm open to speaking on stage</span>
+          </label>
+          <button class="submit-speaker" onclick="submitSpeakerInfo()">Submit</button>
+          <p class="speaker-skip" onclick="document.getElementById('speakerOptIn').style.display='none';">skip</p>
         </div>
       </div>
       <div class="event-details">
@@ -690,9 +805,6 @@
       humanitixUrl: 'https://events.humanitix.com/underground-philosophy-truth-to-power',
       // Google Apps Script Web App URL
       sheetsWebhook: 'https://script.google.com/macros/s/AKfycbzveC7DtgMbeR2i4jRTpZIP499kl3HBHt_UeYO9xkD8xvxrpj5aXsnXCvqVmWNnIHFR/exec',
-      // Discount code shown to people who complete the reflection
-      discountCode: 'INTENTION5',
-      discountAmount: '$5',
       // Phase 2 video (YouTube video ID only)
       // Set to '' to hide video, or add an ID when ready
       phase2VideoId: 'L3ji2mXrFSs'
@@ -740,12 +852,11 @@
 
       if (skipped || !text) {
         document.getElementById('echoBlock').style.display = 'none';
-        document.getElementById('discountBlock').style.display = 'none';
         document.getElementById('passageMessage').textContent = 'We look forward to having you in the room.';
       } else {
         document.getElementById('intentionEcho').textContent = '\u201C' + text + '\u201D';
-        document.getElementById('discountDisplay').textContent = CONFIG.discountCode;
-        document.getElementById('discountAmount').textContent = CONFIG.discountAmount;
+        // Show speaker opt-in for people who engaged
+        document.getElementById('speakerOptIn').style.display = 'block';
         storeIntention(text);
       }
 
@@ -775,6 +886,31 @@
         hint.classList.remove('ready');
         btn.classList.remove('enabled');
       }
+    }
+
+    // =============================================
+    // SPEAKER OPT-IN
+    // =============================================
+    function submitSpeakerInfo() {
+      var name = document.getElementById('speakerName').value.trim();
+      var openToStage = document.getElementById('openToStage').checked;
+
+      // Send speaker info to the same sheet
+      fetch(CONFIG.sheetsWebhook, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: CONFIG.eventName,
+          speakerName: name || '(anonymous)',
+          openToStage: openToStage ? 'Yes' : 'No',
+          timestamp: new Date().toISOString()
+        })
+      }).catch(function() {});
+
+      // Replace the form with a thank you
+      document.getElementById('speakerOptIn').innerHTML =
+        '<p class="speaker-thanks">Noted. See you in the room.</p>';
     }
 
     // =============================================
