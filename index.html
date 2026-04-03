@@ -759,6 +759,19 @@
             <input type="checkbox" id="openToStage">
             <span>I'm open to speaking on stage</span>
           </label>
+          <label class="stage-checkbox">
+            <input type="checkbox" id="joinList" onchange="toggleEmailField()">
+            <span>Join the private events list</span>
+          </label>
+          <div id="emailField" style="display: none;">
+            <input
+              type="email"
+              class="name-input"
+              id="emailInput"
+              placeholder="Your email"
+              style="margin-top: 4px;"
+            >
+          </div>
           <button class="submit-speaker" onclick="submitSpeakerInfo()">Submit</button>
           <p class="speaker-skip" onclick="skipSpeakerInfo()">skip</p>
         </div>
@@ -921,7 +934,8 @@
     // VIDEO
     // =============================================
     function loadVideo(wrapper, videoId) {
-      track('played video');
+      var label = videoId === CONFIG.phase2VideoId ? 'phase 2 video' : 'phase 3 video';
+      track('played ' + label);
       var iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&autoplay=1';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
@@ -935,9 +949,19 @@
     // =============================================
     // SPEAKER OPT-IN
     // =============================================
+    function toggleEmailField() {
+      var checked = document.getElementById('joinList').checked;
+      document.getElementById('emailField').style.display = checked ? 'block' : 'none';
+      if (checked) {
+        document.getElementById('emailInput').focus();
+      }
+    }
+
     function submitSpeakerInfo() {
       var name = document.getElementById('speakerName').value.trim();
       var openToStage = document.getElementById('openToStage').checked;
+      var joinList = document.getElementById('joinList').checked;
+      var email = document.getElementById('emailInput').value.trim();
 
       if (!name) {
         document.getElementById('speakerName').style.borderColor = 'rgba(201, 168, 76, 0.5)';
@@ -945,13 +969,20 @@
         return;
       }
 
-      track('submitted name' + (openToStage ? ' (open to stage)' : ''));
+      if (joinList && !email) {
+        document.getElementById('emailInput').style.borderColor = 'rgba(201, 168, 76, 0.5)';
+        document.getElementById('emailInput').focus();
+        return;
+      }
 
-      // UPDATE the existing row with name and stage info
+      track('submitted name' + (openToStage ? ' (open to stage)' : '') + (joinList ? ' (joined list)' : ''));
+
       send({
         intention: storedIntention,
         speakerName: name,
-        openToStage: openToStage ? 'Yes' : 'No'
+        openToStage: openToStage ? 'Yes' : 'No',
+        email: joinList ? email : '',
+        joinedList: joinList ? 'Yes' : 'No'
       });
 
       document.getElementById('speakerOptIn').innerHTML =
