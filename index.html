@@ -422,15 +422,50 @@
       opacity: 0;
       animation: wygVideoIn 1s ease 0.8s forwards;
       background: var(--surface);
+      cursor: pointer;
     }
 
-    .video-wrapper iframe {
+    .video-wrapper iframe,
+    .video-wrapper img {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       border: none;
+      object-fit: cover;
+    }
+
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 72px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+
+    .video-wrapper:hover .video-play-btn {
+      background: rgba(201, 168, 76, 0.8);
+    }
+
+    .video-play-btn::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 12px 0 12px 22px;
+      border-color: transparent transparent transparent white;
+      margin-left: 4px;
     }
 
     .video-label {
@@ -709,13 +744,9 @@
       <!-- VIDEO PLACEHOLDER: replace phase2VideoId in CONFIG when ready -->
       <div id="phase2VideoBlock" style="display: none;">
         <p class="video-label">Dialogue at Underground Philosophy:</p>
-        <div class="video-wrapper">
-          <iframe
-            id="phase2Video"
-            src="about:blank"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
+        <div class="video-wrapper" id="phase2VideoWrapper">
+          <img id="phase2Poster" src="" alt="Video thumbnail">
+          <div class="video-play-btn" id="phase2PlayBtn"></div>
         </div>
       </div>
       <p class="reflection-prompt">What goes unheard today? What interests you about this topic?</p>
@@ -763,7 +794,7 @@
             <span>I'm open to speaking on stage</span>
           </label>
           <button class="submit-speaker" onclick="submitSpeakerInfo()">Submit</button>
-          <p class="speaker-skip" onclick="document.getElementById('speakerOptIn').style.display='none';">skip</p>
+          <p class="speaker-skip" onclick="skipSpeakerInfo()">skip</p>
         </div>
       </div>
       <div class="event-details">
@@ -778,12 +809,9 @@
         </ul>
       </div>
       <p class="video-label">Reflections on Voicecraft from Elder Les Spencer</p>
-      <div class="video-wrapper">
-        <iframe
-          src="https://www.youtube.com/embed/IMVY2zcVuUo?rel=0&modestbranding=1&showinfo=0&playsinline=1&vq=hd720"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
+      <div class="video-wrapper" onclick="loadVideo(this, 'IMVY2zcVuUo')">
+        <img src="https://img.youtube.com/vi/IMVY2zcVuUo/maxresdefault.jpg" alt="Video thumbnail">
+        <div class="video-play-btn"></div>
       </div>
     </div>
 
@@ -828,11 +856,14 @@
     function goToReflection() {
       document.getElementById('logoFooter').style.display = 'none';
 
-      // Only show and load Phase 2 video if an ID is set
+      // Only show Phase 2 video if an ID is set
       if (CONFIG.phase2VideoId) {
         document.getElementById('phase2VideoBlock').style.display = 'block';
-        document.getElementById('phase2Video').src =
-          'https://www.youtube.com/embed/' + CONFIG.phase2VideoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&vq=hd720';
+        document.getElementById('phase2Poster').src =
+          'https://img.youtube.com/vi/' + CONFIG.phase2VideoId + '/maxresdefault.jpg';
+        document.getElementById('phase2VideoWrapper').onclick = function() {
+          loadVideo(this, CONFIG.phase2VideoId);
+        };
       }
 
       setTimeout(function() {
@@ -848,8 +879,9 @@
       var text = document.getElementById('intentionText').value.trim();
 
       // Stop Phase 2 video if it was playing
-      if (CONFIG.phase2VideoId) {
-        document.getElementById('phase2Video').src = '';
+      var phase2iframe = document.querySelector('#phase2VideoWrapper iframe');
+      if (phase2iframe) {
+        phase2iframe.src = '';
       }
 
       if (skipped || !text) {
@@ -860,7 +892,6 @@
         // Show speaker opt-in for people who engaged
         document.getElementById('speakerOptIn').style.display = 'block';
         storedIntention = text;
-        storeIntention(text);
       }
 
       var ticketUrl = CONFIG.humanitixUrl
@@ -892,6 +923,20 @@
     }
 
     // =============================================
+    // VIDEO POSTER → IFRAME ON CLICK
+    // =============================================
+    function loadVideo(wrapper, videoId) {
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&autoplay=1';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      wrapper.innerHTML = '';
+      wrapper.appendChild(iframe);
+      wrapper.style.cursor = 'default';
+      wrapper.onclick = null;
+    }
+
+    // =============================================
     // SPEAKER OPT-IN
     // =============================================
     function submitSpeakerInfo() {
@@ -904,16 +949,16 @@
         return;
       }
 
-      // Send speaker info to the same sheet
+      // Send everything in one row
       fetch(CONFIG.sheetsWebhook, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event: CONFIG.eventName,
+          intention: storedIntention,
           speakerName: name,
           openToStage: openToStage ? 'Yes' : 'No',
-          intention: storedIntention,
           timestamp: new Date().toISOString()
         })
       }).catch(function() {});
@@ -921,6 +966,12 @@
       // Replace the form with a thank you
       document.getElementById('speakerOptIn').innerHTML =
         '<p class="speaker-thanks">Noted. See you in the room.</p>';
+    }
+
+    function skipSpeakerInfo() {
+      // Send just the intention without speaker info
+      storeIntention(storedIntention);
+      document.getElementById('speakerOptIn').style.display = 'none';
     }
 
     // =============================================
