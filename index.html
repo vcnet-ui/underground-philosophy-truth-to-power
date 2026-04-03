@@ -483,28 +483,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* --- Discount code reveal --- */
-    .discount-reveal {
-      margin-top: 16px;
-      padding: 0;
-      border: none;
-      background: none;
-    }
-
-    .discount-reveal p {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .discount-reveal .code {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-weight: 500;
-      color: #c9a84c;
-      letter-spacing: 2px;
-    }
-
     /* --- Speaker opt-in block --- */
     .speaker-block {
       margin-top: 40px;
@@ -682,18 +660,6 @@
       font-style: italic;
     }
 
-    .event-note {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin-top: 20px;
-      max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-      font-style: italic;
-    }
-
     /* --- Responsive --- */
     @media (max-width: 520px) {
       .container {
@@ -741,7 +707,6 @@
 
     <!-- PHASE 2: Reflection -->
     <div class="phase" id="phase-reflect">
-      <!-- VIDEO PLACEHOLDER: replace phase2VideoId in CONFIG when ready -->
       <div id="phase2VideoBlock" style="display: none;">
         <p class="video-label">Dialogue at Underground Philosophy:</p>
         <div class="video-wrapper" id="phase2VideoWrapper">
@@ -828,12 +793,8 @@
     // =============================================
     var CONFIG = {
       eventName: 'Truth to Power',
-      // Replace with your actual Humanitix event URL (no trailing slash)
       humanitixUrl: 'https://events.humanitix.com/underground-philosophy-truth-to-power',
-      // Google Apps Script Web App URL
       sheetsWebhook: 'https://script.google.com/macros/s/AKfycbzveC7DtgMbeR2i4jRTpZIP499kl3HBHt_UeYO9xkD8xvxrpj5aXsnXCvqVmWNnIHFR/exec',
-      // Phase 2 video (YouTube video ID only)
-      // Set to '' to hide video, or add an ID when ready
       phase2VideoId: 'L3ji2mXrFSs'
     };
 
@@ -856,7 +817,6 @@
     function goToReflection() {
       document.getElementById('logoFooter').style.display = 'none';
 
-      // Only show Phase 2 video if an ID is set
       if (CONFIG.phase2VideoId) {
         document.getElementById('phase2VideoBlock').style.display = 'block';
         document.getElementById('phase2Poster').src =
@@ -889,9 +849,10 @@
         document.getElementById('passageMessage').textContent = 'We look forward to having you in the room.';
       } else {
         document.getElementById('intentionEcho').textContent = '\u201C' + text + '\u201D';
-        // Show speaker opt-in for people who engaged
         document.getElementById('speakerOptIn').style.display = 'block';
         storedIntention = text;
+        // SEND INTENTION IMMEDIATELY
+        storeIntention(text);
       }
 
       var ticketUrl = CONFIG.humanitixUrl
@@ -949,7 +910,6 @@
         return;
       }
 
-      // Send everything in one row
       fetch(CONFIG.sheetsWebhook, {
         method: 'POST',
         mode: 'no-cors',
@@ -963,19 +923,16 @@
         })
       }).catch(function() {});
 
-      // Replace the form with a thank you
       document.getElementById('speakerOptIn').innerHTML =
         '<p class="speaker-thanks">Noted. See you in the room.</p>';
     }
 
     function skipSpeakerInfo() {
-      // Send just the intention without speaker info
-      storeIntention(storedIntention);
       document.getElementById('speakerOptIn').style.display = 'none';
     }
 
     // =============================================
-    // STORE INTENTION (Google Sheets via Apps Script)
+    // STORE INTENTION (Google Sheets)
     // =============================================
     function storeIntention(text) {
       fetch(CONFIG.sheetsWebhook, {
@@ -987,9 +944,7 @@
           intention: text,
           timestamp: new Date().toISOString()
         })
-      }).catch(function() {
-        // Silent fail
-      });
+      }).catch(function() {});
     }
 
     // =============================================
