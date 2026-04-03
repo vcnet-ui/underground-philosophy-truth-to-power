@@ -702,7 +702,7 @@
       <p class="event-theme">Where spetators become participants.</p>
       <p class="event-meta">Caz Reitop's, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April 2026 &nbsp;&middot;&nbsp; 25 seats</p>
       <button class="enter-btn" onclick="goToReflection()">Enter</button>
-      <div class="direct-link"><a href="#" target="_blank">or go directly to tickets &rarr;</a></div>
+      <div class="direct-link"><a href="#" target="_blank" onclick="trackTicketClick('phase 1 direct')">or go directly to tickets &rarr;</a></div>
     </div>
 
     <!-- PHASE 2: Reflection -->
@@ -728,7 +728,7 @@
         <button class="continue-btn" id="continueBtn" onclick="goToPassage()">Continue</button>
         <button class="skip-link" onclick="goToPassage(true)">skip this step</button>
       </div>
-      <div class="direct-link"><a href="#" target="_blank">or go directly to tickets &rarr;</a></div>
+      <div class="direct-link"><a href="#" target="_blank" onclick="trackTicketClick('phase 2 direct')">or go directly to tickets &rarr;</a></div>
     </div>
 
     <!-- PHASE 3: Passage to tickets -->
@@ -743,6 +743,7 @@
           id="ticketLink"
           href="#"
           target="_blank"
+          onclick="trackTicketClick('main button')"
         >Get your ticket</a>
       </div>
       <div id="speakerOptIn" style="display: none;">
@@ -789,7 +790,7 @@
 
   <script>
     // =============================================
-    // CONFIGURATION — Edit these for each event
+    // CONFIGURATION
     // =============================================
     var CONFIG = {
       eventName: 'Truth to Power',
@@ -797,6 +798,37 @@
       sheetsWebhook: 'https://script.google.com/macros/s/AKfycbzveC7DtgMbeR2i4jRTpZIP499kl3HBHt_UeYO9xkD8xvxrpj5aXsnXCvqVmWNnIHFR/exec',
       phase2VideoId: 'L3ji2mXrFSs'
     };
+
+    // =============================================
+    // SESSION TRACKING
+    // =============================================
+    var sessionId = 'S' + Date.now() + Math.random().toString(36).substr(2, 5);
+    var pageLoadTime = new Date();
+    var actions = [];
+    var storedIntention = '';
+
+    function elapsed() {
+      return Math.round((new Date() - pageLoadTime) / 1000) + 's';
+    }
+
+    function track(action) {
+      actions.push(action + ' (' + elapsed() + ')');
+    }
+
+    // Send data to sheet — all updates use sessionId so the script
+    // can find and update the same row
+    function send(data) {
+      data.sessionId = sessionId;
+      data.event = CONFIG.eventName;
+      data.actions = actions.join(' → ');
+      data.timeOnPage = elapsed();
+      fetch(CONFIG.sheetsWebhook, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).catch(function() {});
+    }
 
     // =============================================
     // PHASE TRANSITIONS
@@ -816,6 +848,7 @@
 
     function goToReflection() {
       document.getElementById('logoFooter').style.display = 'none';
+      track('entered');
 
       if (CONFIG.phase2VideoId) {
         document.getElementById('phase2VideoBlock').style.display = 'block';
@@ -831,14 +864,11 @@
       }, 100);
     }
 
-    // Track the intention text for linking with speaker info
-    var storedIntention = '';
-
     function goToPassage(skipped) {
       skipped = skipped || false;
       var text = document.getElementById('intentionText').value.trim();
 
-      // Stop Phase 2 video if it was playing
+      // Stop Phase 2 video
       var phase2iframe = document.querySelector('#phase2VideoWrapper iframe');
       if (phase2iframe) {
         phase2iframe.src = '';
@@ -847,12 +877,16 @@
       if (skipped || !text) {
         document.getElementById('echoBlock').style.display = 'none';
         document.getElementById('passageMessage').textContent = 'We look forward to having you in the room.';
+        track('skipped reflection');
+        // Still create a row so we know someone visited
+        send({ skipped: 'Yes' });
       } else {
         document.getElementById('intentionEcho').textContent = '\u201C' + text + '\u201D';
         document.getElementById('speakerOptIn').style.display = 'block';
         storedIntention = text;
-        // SEND INTENTION IMMEDIATELY
-        storeIntention(text);
+        track('wrote intention');
+        // CREATE THE ROW — intention goes to sheet immediately
+        send({ intention: text });
       }
 
       var ticketUrl = CONFIG.humanitixUrl
@@ -884,9 +918,10 @@
     }
 
     // =============================================
-    // VIDEO POSTER → IFRAME ON CLICK
+    // VIDEO
     // =============================================
     function loadVideo(wrapper, videoId) {
+      track('played video');
       var iframe = document.createElement('iframe');
       iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&autoplay=1';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
@@ -910,41 +945,31 @@
         return;
       }
 
-      fetch(CONFIG.sheetsWebhook, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: CONFIG.eventName,
-          intention: storedIntention,
-          speakerName: name,
-          openToStage: openToStage ? 'Yes' : 'No',
-          timestamp: new Date().toISOString()
-        })
-      }).catch(function() {});
+      track('submitted name' + (openToStage ? ' (open to stage)' : ''));
+
+      // UPDATE the existing row with name and stage info
+      send({
+        intention: storedIntention,
+        speakerName: name,
+        openToStage: openToStage ? 'Yes' : 'No'
+      });
 
       document.getElementById('speakerOptIn').innerHTML =
         '<p class="speaker-thanks">Noted. See you in the room.</p>';
     }
 
     function skipSpeakerInfo() {
+      track('skipped speaker form');
+      send({ intention: storedIntention });
       document.getElementById('speakerOptIn').style.display = 'none';
     }
 
     // =============================================
-    // STORE INTENTION (Google Sheets)
+    // TICKET CLICK TRACKING
     // =============================================
-    function storeIntention(text) {
-      fetch(CONFIG.sheetsWebhook, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: CONFIG.eventName,
-          intention: text,
-          timestamp: new Date().toISOString()
-        })
-      }).catch(function() {});
+    function trackTicketClick(source) {
+      track('clicked tickets from ' + source);
+      send({ intention: storedIntention });
     }
 
     // =============================================
