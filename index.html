@@ -920,12 +920,12 @@
     }
 
     // =============================================
-    // PHASE 1 ABANDONMENT BEACON
+    // PHASE 1 ABANDONMENT BEACON (3s delay to filter bots)
     // =============================================
     setTimeout(function() {
       send({ landed: 'Yes' });
       track('page loaded');
-    }, 500);
+    }, 3000);
 
     // =============================================
     // PHASE TRANSITIONS
