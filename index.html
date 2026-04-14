@@ -869,6 +869,20 @@
     }
 
     // =============================================
+    // UTM PARAMETER CAPTURE
+    // =============================================
+    function getUTM() {
+      var params = new URLSearchParams(window.location.search);
+      return {
+        source: params.get('utm_source') || '',
+        medium: params.get('utm_medium') || '',
+        campaign: params.get('utm_campaign') || ''
+      };
+    }
+
+    var utm = getUTM();
+
+    // =============================================
     // RETURN VISIT DETECTION
     // =============================================
     var visitCount = 1;
@@ -906,7 +920,10 @@
       data.timeOnPage = elapsed();
       data.device = getDevice();
       data.screenSize = getScreenSize();
-      data.referrer = getReferrer();
+      data.referrer = utm.source ? (utm.source + ' / ' + (utm.medium || 'unknown')) : getReferrer();
+      data.utmSource = utm.source;
+      data.utmMedium = utm.medium;
+      data.utmCampaign = utm.campaign;
       data.visitCount = visitCount;
       data.isReturn = isReturn ? 'Yes' : 'No';
       data.scrollDepth = maxScrollDepth + '%';
