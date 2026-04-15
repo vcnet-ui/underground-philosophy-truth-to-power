@@ -10,20 +10,16 @@
       --dark: #252834;
       --surface: #2b2f3c;
       --accent: #152325;
-      --accent-glow: rgba(21, 35, 37, 0.4);
       --text: #d4cfc7;
       --text-bright: #ede9e2;
       --text-dim: rgba(212, 207, 199, 0.6);
       --text-mid: rgba(212, 207, 199, 0.8);
-      --ember: #c45d3e;
+      --gold: #c9a84c;
+      --gold-dim: rgba(201, 168, 76, 0.15);
       --border: rgba(212, 207, 199, 0.08);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: var(--dark);
@@ -39,652 +35,210 @@
       overflow-x: hidden;
     }
 
-    /* --- Ambient background --- */
     .ambient {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
     }
-
     .ambient::before {
-      content: '';
-      position: absolute;
-      top: -20%;
-      left: -20%;
-      width: 60%;
-      height: 60%;
-      background: radial-gradient(ellipse, rgba(21, 35, 37, 0.15) 0%, transparent 70%);
-      animation: ambientDrift 20s ease-in-out infinite alternate;
+      content: ''; position: absolute; top: -20%; left: -20%; width: 60%; height: 60%;
+      background: radial-gradient(ellipse, rgba(21,35,37,0.15) 0%, transparent 70%);
+      animation: drift 20s ease-in-out infinite alternate;
     }
-
     .ambient::after {
-      content: '';
-      position: absolute;
-      bottom: -20%;
-      right: -20%;
-      width: 50%;
-      height: 50%;
-      background: radial-gradient(ellipse, rgba(196, 93, 62, 0.04) 0%, transparent 70%);
-      animation: ambientDrift 25s ease-in-out infinite alternate-reverse;
+      content: ''; position: absolute; bottom: -20%; right: -20%; width: 50%; height: 50%;
+      background: radial-gradient(ellipse, rgba(196,93,62,0.04) 0%, transparent 70%);
+      animation: drift 25s ease-in-out infinite alternate-reverse;
     }
+    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px,30px); } }
 
-    @keyframes ambientDrift {
-      from { transform: translate(0, 0); }
-      to { transform: translate(40px, 30px); }
-    }
-
-    /* --- Grain overlay --- */
     .grain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 256px 256px;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat; background-size: 256px;
     }
 
-    /* --- Container --- */
     .container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      padding: 120px 28px 40px;
-      text-align: center;
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      animation: portalPulse 6s ease-in-out infinite;
-      box-shadow: 
-        0 0 20px rgba(201, 168, 76, 0.03),
-        inset 0 0 20px rgba(201, 168, 76, 0.02);
+      position: relative; z-index: 2; width: 100%;
+      padding: 120px 28px 40px; text-align: center;
+      border: 1px solid rgba(201,168,76,0.25);
+      animation: pulse 6s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(201,168,76,0.03), inset 0 0 20px rgba(201,168,76,0.02);
+    }
+    @keyframes pulse {
+      0%, 100% { border-color: rgba(201,168,76,0.15); box-shadow: 0 0 20px rgba(201,168,76,0.02), inset 0 0 20px rgba(201,168,76,0.01); }
+      50% { border-color: rgba(201,168,76,0.35); box-shadow: 0 0 40px rgba(201,168,76,0.06), inset 0 0 40px rgba(201,168,76,0.03); }
     }
 
-    @keyframes portalPulse {
-      0% { 
-        border-color: rgba(201, 168, 76, 0.15);
-        box-shadow: 0 0 20px rgba(201, 168, 76, 0.02), inset 0 0 20px rgba(201, 168, 76, 0.01);
-      }
-      50% { 
-        border-color: rgba(201, 168, 76, 0.35);
-        box-shadow: 0 0 40px rgba(201, 168, 76, 0.06), inset 0 0 40px rgba(201, 168, 76, 0.03);
-      }
-      100% { 
-        border-color: rgba(201, 168, 76, 0.15);
-        box-shadow: 0 0 20px rgba(201, 168, 76, 0.02), inset 0 0 20px rgba(201, 168, 76, 0.01);
-      }
+    .phase { display: none; opacity: 0; max-width: 760px; margin: 0 auto; }
+    .phase.active { display: block; animation: fadeIn 1.2s ease forwards; }
+    .phase.exiting { animation: fadeOut 0.6s ease forwards; }
+    @keyframes fadeIn { 0% { opacity:0; transform:translateY(16px); } 100% { opacity:1; transform:translateY(0); } }
+    @keyframes fadeOut { 0% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-12px); } }
+
+    /* --- Typography --- */
+    .label { font-size: 16px; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 32px; }
+    .title { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px,9vw,72px); font-weight: 300; line-height: 1.15; color: var(--text-bright); margin-bottom: 24px; letter-spacing: -0.5px; }
+    .theme { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300; font-style: italic; color: var(--text-mid); margin-bottom: 16px; line-height: 1.5; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .meta { font-size: 18px; color: var(--text-dim); margin-bottom: 20px; line-height: 1.7; }
+    .body-text { font-size: 17px; color: var(--text-mid); line-height: 1.7; max-width: 600px; margin: 0 auto 20px; }
+    .body-text strong { color: var(--text-bright); font-weight: 400; }
+    .section-label { font-size: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-top: 36px; margin-bottom: 16px; }
+
+    /* --- Topic questions --- */
+    .topic-questions {
+      font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300;
+      font-style: italic; color: var(--text-mid); line-height: 1.6;
+      max-width: 560px; margin: 0 auto 32px; padding: 20px 0;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
 
-    /* --- Phase system --- */
-    .phase {
-      display: none;
-      opacity: 0;
-      max-width: 760px;
-      margin-left: auto;
-      margin-right: auto;
+    /* --- Event photo --- */
+    .event-photo {
+      width: 100%; max-width: 560px; margin: 24px auto;
+      border: 1px solid var(--border); opacity: 0.85;
     }
+    .event-photo img { width: 100%; display: block; }
+    .photo-caption { font-size: 12px; color: var(--text-dim); margin-top: 8px; font-style: italic; }
 
-    .phase.active {
-      display: block;
-      animation: phaseIn 1.2s ease forwards;
+    /* --- Buttons --- */
+    .btn-gold {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 17px; font-weight: 500;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--text);
+      background: transparent; border: 1px solid var(--gold); padding: 18px 52px;
+      cursor: pointer; transition: all 0.5s ease; position: relative; overflow: hidden;
+      text-decoration: none; display: inline-block;
     }
+    .btn-gold::before { content:''; position:absolute; bottom:0; left:0; width:100%; height:0%; background:var(--accent); transition:height 0.5s ease; z-index:-1; }
+    .btn-gold:hover { border-color: #dfc06a; color: var(--text-bright); }
+    .btn-gold:hover::before { height: 100%; }
 
-    .phase.exiting {
-      animation: phaseOut 0.6s ease forwards;
-    }
-
-    @keyframes phaseIn {
-      0% { opacity: 0; transform: translateY(16px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes phaseOut {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-12px); }
-    }
-
-    /* --- Phase 1: Invitation --- */
-    .event-label {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 32px;
-    }
-
-    .event-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(44px, 9vw, 72px);
-      font-weight: 300;
-      line-height: 1.15;
-      color: var(--text-bright);
-      margin-bottom: 20px;
-      letter-spacing: -0.5px;
-    }
-
-    .event-theme {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--text-mid);
-      margin-bottom: 12px;
-    }
-
-    .event-meta {
-      font-size: 18px;
-      color: var(--text-dim);
-      margin-bottom: 48px;
-      line-height: 1.7;
-    }
-
-    .enter-btn {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text);
-      background: transparent;
-      border: 1px solid #c9a84c;
-      padding: 18px 52px;
-      cursor: pointer;
-      transition: all 0.5s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .enter-btn::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 0%;
-      background: var(--accent);
-      transition: height 0.5s ease;
-      z-index: -1;
-    }
-
-    .enter-btn:hover {
-      border-color: #dfc06a;
-      color: var(--text-bright);
-    }
-
-    .enter-btn:hover::before {
-      height: 100%;
-    }
-
-    /* --- Phase 2: Reflection --- */
-    .reflection-prompt {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(28px, 5.5vw, 42px);
-      font-weight: 300;
-      font-style: italic;
-      color: var(--text-bright);
-      line-height: 1.4;
-      margin-bottom: 40px;
-    }
-
-    .reflection-context {
-      font-size: 19px;
-      color: var(--text-dim);
-      margin-bottom: 36px;
-      line-height: 1.6;
-    }
-
-    .intention-input {
-      width: 100%;
-      min-height: 120px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--text-bright);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 300;
-      font-style: italic;
-      padding: 24px;
-      line-height: 1.6;
-      resize: none;
-      outline: none;
-      transition: border-color 0.4s ease;
-    }
-
-    .intention-input::placeholder {
-      color: var(--text-dim);
-      font-style: italic;
-    }
-
-    .intention-input:focus {
-      border-color: rgba(21, 35, 37, 0.5);
-    }
-
-    .char-hint {
-      font-size: 14px;
-      color: var(--text-dim);
-      margin-top: 10px;
-      text-align: right;
-      transition: color 0.3s ease;
-    }
-
-    .char-hint.ready {
-      color: var(--text-mid);
-    }
-
-    .continue-row {
-      margin-top: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-    }
-
-    .continue-btn {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-bright);
-      background: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 18px 48px;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      opacity: 0.3;
-      pointer-events: none;
-    }
-
-    .continue-btn.enabled {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .continue-btn.enabled:hover {
-      background: transparent;
-      color: var(--text);
-      border-color: var(--text-dim);
-    }
+    .btn-gold.large { font-size: 18px; padding: 20px 56px; }
+    .btn-gold.large::after { content: '\2192'; margin-left: 12px; transition: margin-left 0.3s ease; }
+    .btn-gold.large:hover::after { margin-left: 20px; }
 
     .skip-link {
-      font-size: 17px;
-      color: var(--text-dim);
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.3s ease;
-      border: none;
-      background: none;
+      font-size: 17px; color: var(--text-dim); text-decoration: none; cursor: pointer;
+      transition: color 0.3s ease; border: none; background: none;
       font-family: 'IBM Plex Sans', sans-serif;
     }
+    .skip-link:hover { color: var(--text-mid); }
 
-    .skip-link:hover {
-      color: var(--text-mid);
+    .direct-link { margin-top: 32px; font-size: 16px; letter-spacing: 0.5px; }
+    .direct-link a { color: var(--gold); text-decoration: none; transition: color 0.3s ease; }
+    .direct-link a:hover { color: #dfc06a; }
+
+    /* --- Reflection --- */
+    .reflection-prompt {
+      font-family: 'Cormorant Garamond', serif; font-size: clamp(28px,5.5vw,42px);
+      font-weight: 300; font-style: italic; color: var(--text-bright); line-height: 1.4; margin-bottom: 12px;
     }
+    .reflection-context { font-size: 17px; color: var(--text-dim); margin-bottom: 36px; line-height: 1.6; }
+    .intention-input {
+      width: 100%; min-height: 120px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 2px; color: var(--text-bright); font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 300; font-style: italic; padding: 24px; line-height: 1.6;
+      resize: none; outline: none; transition: border-color 0.4s ease;
+    }
+    .intention-input::placeholder { color: var(--text-dim); font-style: italic; }
+    .intention-input:focus { border-color: rgba(201,168,76,0.3); }
+    .char-hint { font-size: 14px; color: var(--text-dim); margin-top: 10px; text-align: right; }
+    .char-hint.ready { color: var(--text-mid); }
+    .continue-row { margin-top: 36px; display: flex; align-items: center; justify-content: center; gap: 24px; }
+    .continue-btn {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 17px; font-weight: 500;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--text-bright);
+      background: var(--accent); border: 1px solid var(--accent); padding: 18px 48px;
+      cursor: pointer; transition: all 0.4s ease; opacity: 0.3; pointer-events: none;
+    }
+    .continue-btn.enabled { opacity: 1; pointer-events: all; }
+    .continue-btn.enabled:hover { background: transparent; color: var(--text); border-color: var(--text-dim); }
 
-    /* --- Phase 3: Passage --- */
+    /* --- Phase 3 --- */
     .passage-message {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(26px, 5vw, 38px);
-      font-weight: 300;
-      color: var(--text-bright);
-      line-height: 1.5;
-      margin-bottom: 16px;
+      font-family: 'Cormorant Garamond', serif; font-size: clamp(26px,5vw,38px);
+      font-weight: 300; color: var(--text-bright); line-height: 1.5; margin-bottom: 16px;
     }
-
     .intention-echo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--text-mid);
-      max-width: 480px;
-      margin: 0 auto 12px;
-      line-height: 1.5;
-      padding: 20px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300;
+      font-style: italic; color: var(--text-mid); max-width: 480px; margin: 0 auto 12px;
+      line-height: 1.5; padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
 
-    .ticket-btn {
-      display: inline-block;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-bright);
-      background: var(--accent);
-      border: 1px solid #c9a84c;
-      padding: 20px 56px;
-      text-decoration: none;
-      transition: all 0.4s ease;
-      position: relative;
+    /* --- Speaker opt-in --- */
+    .speaker-block { margin-top: 40px; padding: 32px 0; border-top: 1px solid var(--border); max-width: 440px; margin-left: auto; margin-right: auto; }
+    .speaker-intro { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 24px; }
+    .name-input {
+      width: 100%; max-width: 320px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 2px; color: var(--text-bright); font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px; font-weight: 300; padding: 14px 18px; outline: none;
+      transition: border-color 0.4s ease; margin-bottom: 16px;
     }
-
-    .ticket-btn:hover {
-      background: rgba(21, 35, 37, 0.8);
-      letter-spacing: 4px;
+    .name-input::placeholder { color: var(--text-dim); }
+    .name-input:focus { border-color: rgba(201,168,76,0.3); }
+    .stage-checkbox {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-size: 15px; color: var(--text-mid); cursor: pointer; margin-bottom: 20px;
     }
-
-    .ticket-btn::after {
-      content: '\2192';
-      margin-left: 12px;
-      transition: margin-left 0.3s ease;
+    .stage-checkbox input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+    .submit-speaker {
+      font-size: 14px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text); background: transparent; border: 1px solid rgba(201,168,76,0.3);
+      padding: 12px 36px; cursor: pointer; transition: all 0.4s ease;
     }
+    .submit-speaker:hover { border-color: var(--gold); color: var(--text-bright); }
+    .speaker-skip { font-size: 14px; color: var(--text-dim); cursor: pointer; margin-top: 12px; transition: color 0.3s ease; }
+    .speaker-skip:hover { color: var(--text-mid); }
+    .speaker-thanks { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--text-mid); margin-top: 16px; }
 
-    .ticket-btn:hover::after {
-      margin-left: 20px;
-    }
+    /* --- Event details --- */
+    .event-details { margin-top: 56px; margin-bottom: 40px; padding: 36px 0; border-top: 1px solid rgba(201,168,76,0.15); max-width: 560px; margin-left: auto; margin-right: auto; }
+    .event-venue { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--text-bright); margin-bottom: 6px; }
+    .event-date-recap { font-size: 16px; color: var(--text-mid); margin-bottom: 20px; }
+    .event-schedule { list-style: none; }
+    .event-schedule li { font-size: 16px; color: var(--text-mid); padding: 5px 0; display: flex; justify-content: center; gap: 12px; }
+    .event-schedule li .time { color: var(--text-dim); min-width: 70px; text-align: right; }
+    .event-schedule li .desc { min-width: 280px; text-align: left; }
+    .event-schedule li:last-child .desc { font-style: italic; }
 
-    /* --- Rotating logo --- */
-    .logo-footer {
-      margin-top: 48px;
-      display: flex;
-      justify-content: center;
-      max-width: 760px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .logo-footer img {
-      width: 150px;
-      height: 150px;
-      object-fit: contain;
-      animation: logoSpin 60s linear infinite reverse;
-      opacity: 1;
-    }
-
-    @keyframes logoSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* --- Video embeds --- */
+    /* --- Video --- */
     .video-wrapper {
-      margin-top: 28px;
-      margin-bottom: 28px;
-      position: relative;
-      width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding-top: 56.25%;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      opacity: 0;
-      animation: wygVideoIn 1s ease 0.8s forwards;
-      background: var(--surface);
-      cursor: pointer;
+      margin-top: 28px; margin-bottom: 28px; position: relative; width: 100%;
+      padding-top: 56.25%; border: 1px solid var(--border); overflow: hidden;
+      opacity: 0; animation: vidIn 1s ease 0.8s forwards; background: var(--surface); cursor: pointer;
     }
-
-    .video-wrapper iframe,
-    .video-wrapper img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      object-fit: cover;
-    }
-
+    .video-wrapper iframe, .video-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: cover; }
     .video-play-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 72px;
-      height: 72px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 50%;
-      z-index: 2;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 72px; height: 72px; background: rgba(0,0,0,0.6); border-radius: 50%;
+      z-index: 2; pointer-events: none; display: flex; align-items: center; justify-content: center;
       transition: background 0.3s ease;
     }
+    .video-wrapper:hover .video-play-btn { background: rgba(201,168,76,0.8); }
+    .video-play-btn::after { content:''; width:0; height:0; border-style:solid; border-width:12px 0 12px 22px; border-color:transparent transparent transparent white; margin-left:4px; }
+    .video-label { font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-top: 28px; margin-bottom: 12px; }
+    @keyframes vidIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-    .video-wrapper:hover .video-play-btn {
-      background: rgba(201, 168, 76, 0.8);
-    }
+    /* --- Logo --- */
+    .logo-footer { margin-top: 48px; display: flex; justify-content: center; max-width: 760px; margin-left: auto; margin-right: auto; }
+    .logo-footer img { width: 150px; height: 150px; object-fit: contain; animation: spin 60s linear infinite reverse; opacity: 1; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    .video-play-btn::after {
-      content: '';
-      display: block;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 12px 0 12px 22px;
-      border-color: transparent transparent transparent white;
-      margin-left: 4px;
+    /* --- How it works --- */
+    .how-it-works {
+      background: var(--surface); border: 1px solid var(--border); padding: 28px 32px;
+      max-width: 580px; margin: 28px auto; text-align: left;
     }
-
-    .video-label {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 15px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-top: 28px;
-      margin-bottom: 12px;
-    }
-
-    @keyframes wygVideoIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* --- Speaker opt-in block --- */
-    .speaker-block {
-      margin-top: 40px;
-      padding: 32px 0;
-      border-top: 1px solid var(--border);
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .speaker-intro {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 15px;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    .name-input {
-      width: 100%;
-      max-width: 320px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--text-bright);
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 300;
-      padding: 14px 18px;
-      outline: none;
-      transition: border-color 0.4s ease;
-      margin-bottom: 16px;
-    }
-
-    .name-input::placeholder {
-      color: var(--text-dim);
-    }
-
-    .name-input:focus {
-      border-color: rgba(201, 168, 76, 0.3);
-    }
-
-    .stage-checkbox {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 15px;
-      color: var(--text-mid);
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-
-    .stage-checkbox input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: #c9a84c;
-      cursor: pointer;
-    }
-
-    .submit-speaker {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text);
-      background: transparent;
-      border: 1px solid rgba(201, 168, 76, 0.3);
-      padding: 12px 36px;
-      cursor: pointer;
-      transition: all 0.4s ease;
-    }
-
-    .submit-speaker:hover {
-      border-color: #c9a84c;
-      color: var(--text-bright);
-    }
-
-    .speaker-skip {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text-dim);
-      cursor: pointer;
-      margin-top: 12px;
-      transition: color 0.3s ease;
-    }
-
-    .speaker-skip:hover {
-      color: var(--text-mid);
-    }
-
-    .speaker-thanks {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-style: italic;
-      color: var(--text-mid);
-      margin-top: 16px;
-    }
-
-    /* --- Direct ticket link (appears on every phase) --- */
-    .direct-link {
-      margin-top: 32px;
-      text-align: center;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 16px;
-      letter-spacing: 0.5px;
-    }
-
-    .direct-link a {
-      color: #c9a84c;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .direct-link a:hover {
-      color: #dfc06a;
-    }
-
-    /* --- Event details block --- */
-    .event-details {
-      margin-top: 56px;
-      margin-bottom: 40px;
-      padding: 36px 0;
-      border-top: 1px solid rgba(201, 168, 76, 0.15);
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .event-venue {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 400;
-      color: var(--text-bright);
-      margin-bottom: 6px;
-    }
-
-    .event-date-recap {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text-mid);
-      margin-bottom: 20px;
-    }
-
-    .event-schedule {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .event-schedule li {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text-mid);
-      padding: 5px 0;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .event-schedule li .time {
-      color: var(--text-dim);
-      min-width: 70px;
-      text-align: right;
-    }
-
-    .event-schedule li .desc {
-      min-width: 280px;
-      text-align: left;
-    }
-
-    .event-schedule li:last-child .desc {
-      font-style: italic;
-    }
+    .how-it-works p { font-size: 16px; color: var(--text-mid); line-height: 1.7; margin-bottom: 0; }
 
     /* --- Responsive --- */
     @media (max-width: 520px) {
-      .container {
-        padding: 60px 20px 60px;
-      }
-
-      .intention-input {
-        font-size: 18px;
-        padding: 20px;
-      }
-
-      .continue-row {
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .enter-btn,
-      .continue-btn,
-      .ticket-btn {
-        padding: 16px 40px;
-      }
-
-      .event-schedule li .desc {
-        min-width: 180px;
-      }
+      .container { padding: 60px 20px 60px; }
+      .intention-input { font-size: 18px; padding: 20px; }
+      .continue-row { flex-direction: column; gap: 16px; }
+      .btn-gold, .continue-btn { padding: 16px 40px; }
+      .event-schedule li .desc { min-width: 180px; }
+      .how-it-works { padding: 20px; }
     }
   </style>
 </head>
@@ -695,18 +249,35 @@
 
   <div class="container">
 
-    <!-- PHASE 1: Invitation -->
+    <!-- PHASE 1: The Hook -->
     <div class="phase active" id="phase-invite">
-      <p class="event-label">Underground Philosophy Invites</p>
-      <h1 class="event-title">Truth to Power</h1>
-      <p class="event-theme">Where spetators become participants.</p>
-      <p class="event-meta">Caz Reitop's, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April 2026 &nbsp;&middot;&nbsp; 25 seats</p>
-      <button class="enter-btn" onclick="goToReflection()">Enter</button>
+      <p class="label">Underground Philosophy Invites</p>
+      <h1 class="title">Truth to Power</h1>
+
+      <div class="topic-questions">
+        What of great importance goes unsaid today? What may be said but unheard, ignored, misunderstood, or actively suppressed by people, structures or functions of power?
+      </div>
+
+      <p class="meta">Caz Reitop's Dirty Secrets, Collingwood &nbsp;&middot;&nbsp; Thursday 23rd April &nbsp;&middot;&nbsp; 25 seats</p>
+
+      <div class="event-photo">
+        <img src="https://images.humanitix.com/i/e8d2fb04-3fda-4f53-a648-0e0099a60851.jpg@responsive-1250.webp" alt="Underground Philosophy at Caz Reitop's">
+      </div>
+      <p class="photo-caption">From our last event at this venue, on the topic of Totalitarianism.</p>
+
+      <br>
+      <button class="btn-gold" onclick="goToReflection()">Enter</button>
       <div class="direct-link"><a href="#" target="_blank" onclick="trackTicketClick('phase 1 direct')">or go directly to tickets &rarr;</a></div>
     </div>
 
-    <!-- PHASE 2: Reflection -->
+    <!-- PHASE 2: Context + Reflection -->
     <div class="phase" id="phase-reflect">
+
+      <p class="section-label">How this works</p>
+      <div class="how-it-works">
+        <p>You will take a seat as an audience member in front of a small stage in the underground vault beneath a cocktail bar. Throughout the evening, members of the audience, as well as members of the Voicecraft Network and invited guests, will rotate places in dialogue on stage. Your spoken participation is optional.</p>
+      </div>
+
       <div id="phase2VideoBlock" style="display: none;">
         <p class="video-label">Dialogue at Underground Philosophy:</p>
         <div class="video-wrapper" id="phase2VideoWrapper">
@@ -714,7 +285,8 @@
           <div class="video-play-btn" id="phase2PlayBtn"></div>
         </div>
       </div>
-      <p class="reflection-prompt">What must be brought to light today? What goes unheard?</p>
+
+      <p class="reflection-prompt">Before you arrive &mdash; what draws you to this conversation?</p>
       <p class="reflection-context">Your words help shape the room.</p>
       <textarea
         class="intention-input"
@@ -731,30 +303,21 @@
       <div class="direct-link"><a href="#" target="_blank" onclick="trackTicketClick('phase 2 direct')">or go directly to tickets &rarr;</a></div>
     </div>
 
-    <!-- PHASE 3: Passage to tickets -->
+    <!-- PHASE 3: Tickets -->
     <div class="phase" id="phase-passage">
       <p class="passage-message" id="passageMessage">Your words have been received</p>
       <div id="echoBlock">
         <p class="intention-echo" id="intentionEcho"></p>
       </div>
+
       <div style="margin-top: 36px;">
-        <a
-          class="ticket-btn"
-          id="ticketLink"
-          href="#"
-          target="_blank"
-          onclick="trackTicketClick('main button')"
-        >Get your ticket</a>
+        <a class="btn-gold large" id="ticketLink" href="#" target="_blank" onclick="trackTicketClick('main button')">Get your ticket</a>
       </div>
+
       <div id="speakerOptIn" style="display: none;">
         <div class="speaker-block">
           <p class="speaker-intro">If you'd like, let us know who you are and whether you're open to being invited on stage during the evening.</p>
-          <input
-            type="text"
-            class="name-input"
-            id="speakerName"
-            placeholder="Your name"
-          >
+          <input type="text" class="name-input" id="speakerName" placeholder="Your name">
           <label class="stage-checkbox">
             <input type="checkbox" id="openToStage">
             <span>I'm open to speaking on stage</span>
@@ -764,20 +327,15 @@
             <span>Join the private events list</span>
           </label>
           <div id="emailField" style="display: none;">
-            <input
-              type="email"
-              class="name-input"
-              id="emailInput"
-              placeholder="Your email"
-              style="margin-top: 4px;"
-            >
+            <input type="email" class="name-input" id="emailInput" placeholder="Your email" style="margin-top: 4px;">
           </div>
           <button class="submit-speaker" onclick="submitSpeakerInfo()">Submit</button>
           <p class="speaker-skip" onclick="skipSpeakerInfo()">skip</p>
         </div>
       </div>
+
       <div class="event-details">
-        <p class="event-venue">Caz Reitop's, Collingwood, Melbourne</p>
+        <p class="event-venue">Caz Reitop's Dirty Secrets, Collingwood</p>
         <p class="event-date-recap">Thursday 23rd April 2026</p>
         <ul class="event-schedule">
           <li><span class="time">5.30pm</span><span class="desc">Doors &mdash; gather upstairs in the cocktail lounge</span></li>
@@ -787,7 +345,10 @@
           <li><span class="time">8.00pm</span><span class="desc">Optional speakeasy upstairs in the cocktail lounge</span></li>
         </ul>
       </div>
-      <p class="video-label">Reflections on Voicecraft from Elder Les Spencer</p>
+
+      <p class="body-text" style="font-size: 15px; color: var(--text-dim);">Guiding this collective inquiry is <strong>Tim Adalin</strong>, supported by members of The Voicecraft Network.</p>
+
+      <p class="video-label">Hear from Elder Les Spencer on Voicecraft</p>
       <div class="video-wrapper" onclick="loadVideo(this, 'IMVY2zcVuUo')">
         <img src="https://img.youtube.com/vi/IMVY2zcVuUo/maxresdefault.jpg" alt="Video thumbnail">
         <div class="video-play-btn"></div>
@@ -823,16 +384,11 @@
     var writingDuration = 0;
     var maxScrollDepth = 0;
 
-    function elapsed() {
-      return Math.round((new Date() - pageLoadTime) / 1000) + 's';
-    }
-
-    function track(action) {
-      actions.push(action + ' (' + elapsed() + ')');
-    }
+    function elapsed() { return Math.round((new Date() - pageLoadTime) / 1000) + 's'; }
+    function track(action) { actions.push(action + ' (' + elapsed() + ')'); }
 
     // =============================================
-    // DEVICE & REFERRAL DETECTION
+    // DEVICE & REFERRAL
     // =============================================
     function getDevice() {
       var ua = navigator.userAgent;
@@ -843,11 +399,7 @@
       if (/Linux/i.test(ua)) return 'Linux';
       return 'Unknown';
     }
-
-    function getScreenSize() {
-      return window.innerWidth + 'x' + window.innerHeight;
-    }
-
+    function getScreenSize() { return window.innerWidth + 'x' + window.innerHeight; }
     function getReferrer() {
       var ref = document.referrer;
       if (!ref) return 'Direct';
@@ -860,58 +412,35 @@
       if (ref.indexOf('youtube.com') > -1 || ref.indexOf('youtu.be') > -1) return 'YouTube';
       if (ref.indexOf('voicecraft.io') > -1) return 'Voicecraft';
       if (ref.indexOf('timadalin.xyz') > -1) return 'Tim Adalin site';
-      if (ref.indexOf('squarespace.com') > -1 || ref.indexOf('voicecraft') > -1) return 'Squarespace';
-      try {
-        return new URL(ref).hostname;
-      } catch(e) {
-        return ref.substring(0, 50);
-      }
+      try { return new URL(ref).hostname; } catch(e) { return ref.substring(0, 50); }
     }
 
     // =============================================
-    // UTM PARAMETER CAPTURE
+    // UTM CAPTURE
     // =============================================
     function getUTM() {
       var params = new URLSearchParams(window.location.search);
-      return {
-        source: params.get('utm_source') || '',
-        medium: params.get('utm_medium') || '',
-        campaign: params.get('utm_campaign') || ''
-      };
+      return { source: params.get('utm_source') || '', medium: params.get('utm_medium') || '', campaign: params.get('utm_campaign') || '' };
     }
-
     var utm = getUTM();
 
     // =============================================
-    // RETURN VISIT DETECTION
+    // RETURN VISITS
     // =============================================
-    var visitCount = 1;
-    var isReturn = false;
-    try {
-      var prev = localStorage.getItem('up_visits_ttp');
-      if (prev) {
-        visitCount = parseInt(prev) + 1;
-        isReturn = true;
-      }
-      localStorage.setItem('up_visits_ttp', visitCount.toString());
-    } catch(e) {}
+    var visitCount = 1; var isReturn = false;
+    try { var prev = localStorage.getItem('up_visits_ttp'); if (prev) { visitCount = parseInt(prev) + 1; isReturn = true; } localStorage.setItem('up_visits_ttp', visitCount.toString()); } catch(e) {}
 
     // =============================================
-    // SCROLL DEPTH TRACKING
+    // SCROLL DEPTH
     // =============================================
     window.addEventListener('scroll', function() {
-      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight > 0) {
-        var pct = Math.round((scrollTop / docHeight) * 100);
-        if (pct > maxScrollDepth) {
-          maxScrollDepth = pct;
-        }
-      }
+      var st = window.pageYOffset || document.documentElement.scrollTop;
+      var dh = document.documentElement.scrollHeight - window.innerHeight;
+      if (dh > 0) { var pct = Math.round((st/dh)*100); if (pct > maxScrollDepth) maxScrollDepth = pct; }
     });
 
     // =============================================
-    // SEND DATA
+    // SEND
     // =============================================
     function send(data) {
       data.sessionId = sessionId;
@@ -928,71 +457,40 @@
       data.isReturn = isReturn ? 'Yes' : 'No';
       data.scrollDepth = maxScrollDepth + '%';
       data.writingTime = writingDuration > 0 ? writingDuration + 's' : '';
-      fetch(CONFIG.sheetsWebhook, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      }).catch(function() {});
+      fetch(CONFIG.sheetsWebhook, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) }).catch(function(){});
     }
 
     // =============================================
-    // PHASE 1 ABANDONMENT BEACON (3s delay to filter bots)
+    // LANDING BEACON (3s)
     // =============================================
-    setTimeout(function() {
-      send({ landed: 'Yes' });
-      track('page loaded');
-    }, 3000);
+    setTimeout(function() { send({ landed: 'Yes' }); track('page loaded'); }, 3000);
 
     // =============================================
-    // PHASE TRANSITIONS
+    // PHASES
     // =============================================
     function transitionPhase(fromId, toId) {
-      var from = document.getElementById(fromId);
-      var to = document.getElementById(toId);
-
+      var from = document.getElementById(fromId); var to = document.getElementById(toId);
       from.classList.add('exiting');
-
-      setTimeout(function() {
-        from.classList.remove('active', 'exiting');
-        to.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 600);
+      setTimeout(function() { from.classList.remove('active','exiting'); to.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }, 600);
     }
 
     function goToReflection() {
       document.getElementById('logoFooter').style.display = 'none';
       track('entered');
-
       if (CONFIG.phase2VideoId) {
         document.getElementById('phase2VideoBlock').style.display = 'block';
-        document.getElementById('phase2Poster').src =
-          'https://img.youtube.com/vi/' + CONFIG.phase2VideoId + '/maxresdefault.jpg';
-        document.getElementById('phase2VideoWrapper').onclick = function() {
-          loadVideo(this, CONFIG.phase2VideoId);
-        };
+        document.getElementById('phase2Poster').src = 'https://img.youtube.com/vi/' + CONFIG.phase2VideoId + '/maxresdefault.jpg';
+        document.getElementById('phase2VideoWrapper').onclick = function() { loadVideo(this, CONFIG.phase2VideoId); };
       }
-
-      setTimeout(function() {
-        transitionPhase('phase-invite', 'phase-reflect');
-      }, 100);
+      setTimeout(function() { transitionPhase('phase-invite', 'phase-reflect'); }, 100);
     }
 
     function goToPassage(skipped) {
       skipped = skipped || false;
       var text = document.getElementById('intentionText').value.trim();
-
-      // Stop Phase 2 video
-      var phase2iframe = document.querySelector('#phase2VideoWrapper iframe');
-      if (phase2iframe) {
-        phase2iframe.src = '';
-      }
-
-      // Calculate writing duration
-      if (writingStartTime && text) {
-        writingDuration = Math.round((new Date() - writingStartTime) / 1000);
-      }
-
+      var p2 = document.querySelector('#phase2VideoWrapper iframe');
+      if (p2) p2.src = '';
+      if (writingStartTime && text) writingDuration = Math.round((new Date() - writingStartTime) / 1000);
       if (skipped || !text) {
         document.getElementById('echoBlock').style.display = 'none';
         document.getElementById('passageMessage').textContent = 'We look forward to having you in the room.';
@@ -1005,38 +503,22 @@
         track('wrote intention');
         send({ intention: text });
       }
-
-      var ticketUrl = CONFIG.humanitixUrl
-        + '?utm_source=underground_flow'
-        + '&utm_medium=web';
-
+      var ticketUrl = CONFIG.humanitixUrl + '?utm_source=underground_flow&utm_medium=web';
       document.getElementById('ticketLink').href = ticketUrl;
       transitionPhase('phase-reflect', 'phase-passage');
     }
 
     // =============================================
-    // INPUT HANDLING
+    // INPUT
     // =============================================
     function handleInput() {
       var text = document.getElementById('intentionText').value;
       var hint = document.getElementById('charHint');
       var btn = document.getElementById('continueBtn');
       var len = text.trim().length;
-
-      // Start writing timer on first keystroke
-      if (len === 1 && !writingStartTime) {
-        writingStartTime = new Date();
-      }
-
-      if (len > 0) {
-        hint.textContent = len + ' / 500';
-        hint.classList.add('ready');
-        btn.classList.add('enabled');
-      } else {
-        hint.textContent = '';
-        hint.classList.remove('ready');
-        btn.classList.remove('enabled');
-      }
+      if (len === 1 && !writingStartTime) writingStartTime = new Date();
+      if (len > 0) { hint.textContent = len + ' / 500'; hint.classList.add('ready'); btn.classList.add('enabled'); }
+      else { hint.textContent = ''; hint.classList.remove('ready'); btn.classList.remove('enabled'); }
     }
 
     // =============================================
@@ -1050,21 +532,17 @@
       iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&showinfo=0&playsinline=1&autoplay=1';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
       iframe.allowFullscreen = true;
-      wrapper.innerHTML = '';
-      wrapper.appendChild(iframe);
-      wrapper.style.cursor = 'default';
-      wrapper.onclick = null;
+      wrapper.innerHTML = ''; wrapper.appendChild(iframe);
+      wrapper.style.cursor = 'default'; wrapper.onclick = null;
     }
 
     // =============================================
     // SPEAKER OPT-IN
     // =============================================
     function toggleEmailField() {
-      var checked = document.getElementById('joinList').checked;
-      document.getElementById('emailField').style.display = checked ? 'block' : 'none';
-      if (checked) {
-        document.getElementById('emailInput').focus();
-      }
+      var c = document.getElementById('joinList').checked;
+      document.getElementById('emailField').style.display = c ? 'block' : 'none';
+      if (c) document.getElementById('emailInput').focus();
     }
 
     function submitSpeakerInfo() {
@@ -1072,31 +550,11 @@
       var openToStage = document.getElementById('openToStage').checked;
       var joinList = document.getElementById('joinList').checked;
       var email = document.getElementById('emailInput').value.trim();
-
-      if (!name) {
-        document.getElementById('speakerName').style.borderColor = 'rgba(201, 168, 76, 0.5)';
-        document.getElementById('speakerName').focus();
-        return;
-      }
-
-      if (joinList && !email) {
-        document.getElementById('emailInput').style.borderColor = 'rgba(201, 168, 76, 0.5)';
-        document.getElementById('emailInput').focus();
-        return;
-      }
-
+      if (!name) { document.getElementById('speakerName').style.borderColor = 'rgba(201,168,76,0.5)'; document.getElementById('speakerName').focus(); return; }
+      if (joinList && !email) { document.getElementById('emailInput').style.borderColor = 'rgba(201,168,76,0.5)'; document.getElementById('emailInput').focus(); return; }
       track('submitted name' + (openToStage ? ' (open to stage)' : '') + (joinList ? ' (joined list)' : ''));
-
-      send({
-        intention: storedIntention,
-        speakerName: name,
-        openToStage: openToStage ? 'Yes' : 'No',
-        email: joinList ? email : '',
-        joinedList: joinList ? 'Yes' : 'No'
-      });
-
-      document.getElementById('speakerOptIn').innerHTML =
-        '<p class="speaker-thanks">Noted. See you in the room.</p>';
+      send({ intention: storedIntention, speakerName: name, openToStage: openToStage ? 'Yes' : 'No', email: joinList ? email : '', joinedList: joinList ? 'Yes' : 'No' });
+      document.getElementById('speakerOptIn').innerHTML = '<p class="speaker-thanks">Noted. See you in the room.</p>';
     }
 
     function skipSpeakerInfo() {
@@ -1106,7 +564,7 @@
     }
 
     // =============================================
-    // TICKET CLICK TRACKING
+    // TICKET CLICK
     // =============================================
     function trackTicketClick(source) {
       track('clicked tickets from ' + source);
@@ -1114,38 +572,23 @@
     }
 
     // =============================================
-    // INITIALISE
+    // INIT
     // =============================================
     (function init() {
-      var ticketUrl = CONFIG.humanitixUrl
-        + '?utm_source=underground_flow'
-        + '&utm_medium=web';
-
+      var ticketUrl = CONFIG.humanitixUrl + '?utm_source=underground_flow&utm_medium=web';
       var links = document.querySelectorAll('.direct-link a');
-      for (var i = 0; i < links.length; i++) {
-        links[i].href = ticketUrl;
-      }
+      for (var i = 0; i < links.length; i++) links[i].href = ticketUrl;
       document.getElementById('ticketLink').href = ticketUrl;
     })();
 
     // =============================================
-    // IFRAME AUTO-RESIZE
+    // IFRAME RESIZE
     // =============================================
-    function notifyParentHeight() {
-      var height = document.body.scrollHeight;
-      window.parent.postMessage({ type: 'resize', height: height }, '*');
-    }
-
-    window.addEventListener('load', function() {
-      setTimeout(notifyParentHeight, 100);
-    });
+    function notifyParentHeight() { window.parent.postMessage({ type: 'resize', height: document.body.scrollHeight }, '*'); }
+    window.addEventListener('load', function() { setTimeout(notifyParentHeight, 100); });
     window.addEventListener('resize', notifyParentHeight);
-
     var origTransition = transitionPhase;
-    transitionPhase = function(fromId, toId) {
-      origTransition(fromId, toId);
-      setTimeout(notifyParentHeight, 1000);
-    };
+    transitionPhase = function(a, b) { origTransition(a, b); setTimeout(notifyParentHeight, 1000); };
   </script>
 
 </body>
